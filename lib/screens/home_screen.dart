@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -21,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (totalSeconds == 0) {
       setState(() {
         totalPomodoros += 1;
-        isRunning = false;
         totalSeconds = twentyFiveMinutes;
       });
       onPausePressed();
@@ -51,8 +49,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String format(int seconds) {
     var duration = Duration(seconds: seconds);
-    log(duration.toString().split('.').join(','));
-    return '$seconds';
+    return duration.toString().substring(2, 7);
+  }
+
+  void onResetPressed() {
+    setState(() {
+      totalSeconds = twentyFiveMinutes;
+    });
+    onPausePressed();
   }
 
   @override
@@ -78,13 +82,25 @@ class _HomeScreenState extends State<HomeScreen> {
           Flexible(
             flex: 3,
             child: Center(
-              child: IconButton(
-                iconSize: 120,
-                color: Theme.of(context).cardColor,
-                onPressed: isRunning ? onPausePressed : onStartPressed,
-                icon: Icon(isRunning
-                    ? Icons.pause_circle_outline
-                    : Icons.play_circle_outline),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    iconSize: 120,
+                    color: Theme.of(context).cardColor,
+                    onPressed: isRunning ? onPausePressed : onStartPressed,
+                    icon: Icon(isRunning
+                        ? Icons.pause_circle_outline
+                        : Icons.play_circle_outline),
+                  ),
+                  if (isRunning)
+                    IconButton(
+                      iconSize: 60,
+                      color: Theme.of(context).cardColor,
+                      onPressed: onResetPressed,
+                      icon: const Icon(Icons.refresh_rounded),
+                    )
+                ],
               ),
             ),
           ),
